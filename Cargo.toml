@@ -17,5 +17,5 @@ hearth-interconnect = "0.1.0"
 
 
 [dependencies.charcoal-client]
-git = "https://github.com/CrySteRz/Charcoal-Lib.git"
+git = "https://github.com/CrySteRz/ravalink-client-lib.git"
 
