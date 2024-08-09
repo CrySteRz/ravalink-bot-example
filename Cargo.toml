@@ -1,0 +1,21 @@
+[package]
+name = "rusty-discord-bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+serenity = "0.12.2"
+dotenvy = "0.15.0"
+url = "2.5.2"
+rdkafka = { version = "0.31", features = ["cmake-build","ssl"] }
+
+nanoid = "0.4.0"
+openssl = "0.10.52"
+futures = "0.3.28"
+hearth-interconnect = "0.1.0"
+
+
+[dependencies.charcoal-client]
+git = "https://github.com/CrySteRz/Charcoal-Lib.git"
+
