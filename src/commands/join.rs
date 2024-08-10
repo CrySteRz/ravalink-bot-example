@@ -78,34 +78,23 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
     let manager = r.get::<CharcoalKey>();
     let mx = manager.unwrap().lock().await;
 
-
-    // Check if we have already created the player by checking if the player's GuildID exists in the Players HashMap
-    // Stored inside of the Charcoal Instance.
-    // If we have already created the player just join the channel
     if mx.players.read().await.contains_key(&guild_id.to_string()) {
         println!("Using pre-existing player");
-        // Get a write lock on the players HashMap
         let mut players = mx.players.write().await;
-        // Get a mutable reference to said player
         let handler = players.get_mut(&guild_id.to_string()).expect(
             "This should never happen because we checked the key exists in the if check above",
         );
-        // Join the channel
         handler
             .join_channel(connect_to.to_string(), false)
             .await
-            .unwrap(); // We use false here so Charcoal does not create a pre-existing job
+            .unwrap();
     } else {
         println!("Creating new player");
-        // If we have not created the player create it and then join the channel
         let handler = PlayerObject::new(guild_id.to_string(), mx.tx.clone()).await;
         println!("Created new handler");
-        // Make sure creating the PlayerObject worked
         match handler {
             Ok(mut handler) => {
-                // Register an error callback so errors from the hearth server can be reported back to us
                 handler.register_event_handler(CustomEventHandler {}).await;
-                // Join the channel
                 println!("Registered error callback");
                 handler
                     .join_channel(connect_to.to_string(), true)

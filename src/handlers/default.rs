@@ -8,6 +8,7 @@ pub async fn register_global_commands(ctx: &Context) {
         commands::ping::register(),
         commands::play::register(),
         commands::join::register(),
+        commands::leave::register(),
     ];
 
     for command in commands {
