@@ -3,12 +3,8 @@ use std::error::Error;
 use serenity::all::{CommandInteraction, Context, CreateEmbed, CreateInteractionResponseMessage};
 use serenity::builder::{CreateCommand, CreateInteractionResponse};
 
-use crate::handlers::interaction;
-
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
-    // Await the result of `create_response` and handle any potential errors
     if let Err(e) = create_response(interaction, ctx, "Babasha").await {
-        // If there's an error, respond with an error message
         interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Error occurred: {:?}", e)))).await?;
     }
     Ok(())
@@ -37,7 +33,6 @@ pub async fn create_embed_response(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            // If creating the embed response failed, send an error message
             interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create response: {:?}", e)))).await?;
             Ok(())
         }

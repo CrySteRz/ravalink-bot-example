@@ -3,7 +3,7 @@ use serenity::all::Context;
 use serenity::all::CommandInteraction;
 use std::error::Error;
 
-pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn run(_ctx: &Context, _interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
 
 
     Ok(())
