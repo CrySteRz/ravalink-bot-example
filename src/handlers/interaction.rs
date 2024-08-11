@@ -21,6 +21,30 @@ pub async fn handle_interaction(ctx: Context, interaction: Interaction) {
                 }
                 None
             },
+            "leave" => {
+                if let Err(why) = commands::leave::run(&ctx, &command).await {
+                    println!("Error handling leave command: {why}");
+                }
+                None
+            },
+            "skip" => {
+                if let Err(why) = commands::skip::run(&ctx, &command).await {
+                    println!("Error handling skip command: {why}");
+                }
+                None
+            },
+            "pause" => {
+                if let Err(why) = commands::pause::run(&ctx, &command).await {
+                    println!("Error handling pause command: {why}");
+                }
+                None
+            },
+            "resume" => {
+                if let Err(why) = commands::resume::run(&ctx, &command).await {
+                    println!("Error handling resume command: {why}");
+                }
+                None
+            },
             _ => Some("not implemented :(".to_string()),
         };
 

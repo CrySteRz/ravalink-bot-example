@@ -9,6 +9,10 @@ pub async fn register_global_commands(ctx: &Context) {
         commands::play::register(),
         commands::join::register(),
         commands::leave::register(),
+        commands::pause::register(),
+        commands::resume::register(),
+        commands::skip::register(),
+
     ];
 
     for command in commands {
