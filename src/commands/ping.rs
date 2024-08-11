@@ -6,7 +6,7 @@ use crate::communication::default::RustyMessage;
 use crate::communication::default::RustyMessageError;
 
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
-    if let Err(e) = create_response(interaction, ctx, RustyMessage::Ping).await {
+    if let Err(_e) = create_response(interaction, ctx, RustyMessage::Ping).await {
         interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(RustyMessageError::Ping))).await?;
     }
     Ok(())
