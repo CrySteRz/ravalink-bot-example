@@ -3,24 +3,29 @@ use std::error::Error;
 use serenity::all::{CommandInteraction, Context, CreateEmbed, CreateInteractionResponseMessage};
 use serenity::builder::{CreateCommand, CreateInteractionResponse};
 
-pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
-    "Hey, I'm alive!".to_string();
+use crate::handlers::interaction;
 
+pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
+    // Await the result of `create_response` and handle any potential errors
+    if let Err(e) = create_response(interaction, ctx, "Babasha").await {
+        // If there's an error, respond with an error message
+        interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Error occurred: {:?}", e)))).await?;
+    }
     Ok(())
 }
 
 pub async fn create_response(
-    interaction: &mut CommandInteraction,
+    interaction: &CommandInteraction,
     ctx: &Context, 
-    message: String,
-) -> Result<(), Box<dyn Error + Send + Sync>>{
+    message: &str,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     let embed = CreateEmbed::default()
-    .description(format!("{message}"));
-    create_embed_response(interaction, &ctx, embed).await
+        .description(format!("{message}"));
+    create_embed_response(interaction, ctx, embed).await
 }
 
 pub async fn create_embed_response(
-    interaction: &mut CommandInteraction,
+    interaction: &CommandInteraction,
     ctx: &Context, 
     embed: CreateEmbed,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -32,13 +37,12 @@ pub async fn create_embed_response(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            // If creating the job failed send an error message
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create player: {:?}", e)))).await?;
+            // If creating the embed response failed, send an error message
+            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create response: {:?}", e)))).await?;
             Ok(())
         }
     }
 }
-
 
 pub fn register() -> CreateCommand {
     CreateCommand::new("ping").description("A ping command")
