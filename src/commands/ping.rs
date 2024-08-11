@@ -14,10 +14,9 @@ pub async fn create_response(
     ctx: &Context, 
     message: String,
 ) -> Result<(), Box<dyn Error + Send + Sync>>{
-    let mut embed = CreateEmbed::default();
-    let mut test = embed;
-    test.description(format!("{message}"));
-    create_embed_response(interaction, &ctx, test).await
+    let embed = CreateEmbed::default()
+    .description(format!("{message}"));
+    create_embed_response(interaction, &ctx, embed).await
 }
 
 pub async fn create_embed_response(
