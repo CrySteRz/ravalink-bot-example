@@ -1,8 +1,10 @@
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
+use serenity::all::{ButtonStyle, CreateActionRow, CreateButton, CreateEmbed};
 use serenity::builder::{CreateCommand, CreateCommandOption, CreateInteractionResponse, CreateInteractionResponseMessage};
 use serenity::model::application::CommandOptionType;
 use::serenity::client::Context;
+use url::Url;
 use crate::utils::*;
 use charcoal_client::{
     get_handler_from_interaction_mutable, PlayerObject,
@@ -34,7 +36,23 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
         match _handler {
             Some(_handler) => {
                 _handler.play_from_youtube(url.to_string()).await.unwrap();
-                interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Playing"))).await?;
+                let user = interaction.user.clone();
+                let embed = CreateEmbed::default()
+                    .description(format!("Playing: ({})", url)) 
+                    .author(user.into());
+
+                let pause_button = CreateButton::new("pause_button")
+                    .label("Pause")
+                    .style(ButtonStyle::Primary);
+
+                let stop_button = CreateButton::new("stop_button")
+                    .label("Stop")
+                    .style(ButtonStyle::Danger);
+
+                // Create an action row and add buttons to it
+                let action_row = CreateActionRow::Buttons(vec![pause_button, stop_button]);
+
+                interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().embed(embed).components(vec![action_row]))).await?;
             }
             None => {
                 interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;
