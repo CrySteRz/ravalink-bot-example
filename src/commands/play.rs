@@ -4,8 +4,8 @@ use serenity::all::{ButtonStyle, CreateActionRow, CreateButton, CreateEmbed};
 use serenity::builder::{CreateCommand, CreateCommandOption, CreateInteractionResponse, CreateInteractionResponseMessage};
 use serenity::model::application::CommandOptionType;
 use::serenity::client::Context;
-use url::Url;
 use crate::utils::*;
+
 use charcoal_client::{
     get_handler_from_interaction_mutable, PlayerObject,
 };
@@ -45,12 +45,15 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
                     .label("Pause")
                     .style(ButtonStyle::Primary);
 
+                let ping_button = CreateButton::new("ping_button")
+                    .label("PING")
+                    .style(ButtonStyle::Secondary);
+                    
                 let stop_button = CreateButton::new("stop_button")
                     .label("Stop")
                     .style(ButtonStyle::Danger);
 
-                // Create an action row and add buttons to it
-                let action_row = CreateActionRow::Buttons(vec![pause_button, stop_button]);
+                let action_row = CreateActionRow::Buttons(vec![pause_button, ping_button, stop_button]);
 
                 interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().embed(embed).components(vec![action_row]))).await?;
             }
