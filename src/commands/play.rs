@@ -42,20 +42,41 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
                     .author(user.into());
 
                 let pause_button = CreateButton::new("pause_button")
-                    .label("Pause")
-                    .style(ButtonStyle::Primary);
+                    .label("⏸️Pause")
+                    .style(ButtonStyle::Secondary);
+
+                let resume_button = CreateButton::new("resume_button")
+                    .label("▶️Resume")
+                    .style(ButtonStyle::Secondary);
+
+                let back_button = CreateButton::new("back_button")
+                    .label("⏮️Back")
+                    .style(ButtonStyle::Secondary);
+
+                let skip_button = CreateButton::new("skip_button")
+                    .label("⏭️Skip")
+                    .style(ButtonStyle::Secondary);
+
+                let down_button = CreateButton::new("down_button")
+                    .label("🔉Down")
+                    .style(ButtonStyle::Secondary);
+
+                let up_button = CreateButton::new("up_button")
+                    .label("🔊Up")
+                    .style(ButtonStyle::Secondary);
 
                 let ping_button = CreateButton::new("ping_button")
                     .label("PING")
                     .style(ButtonStyle::Secondary);
                     
                 let stop_button = CreateButton::new("stop_button")
-                    .label("Stop")
-                    .style(ButtonStyle::Danger);
+                    .label("⏹️Stop")
+                    .style(ButtonStyle::Secondary);
 
-                let action_row = CreateActionRow::Buttons(vec![pause_button, ping_button, stop_button]);
+                let action_row1 = CreateActionRow::Buttons(vec![pause_button, resume_button, back_button, skip_button]);
+                let action_row2 = CreateActionRow::Buttons(vec![down_button, up_button, ping_button, stop_button]);
 
-                interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().embed(embed).components(vec![action_row]))).await?;
+                interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().embed(embed).components(vec![action_row1,action_row2]))).await?;
             }
             None => {
                 interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;
