@@ -5,7 +5,6 @@ use crate::commands;
 pub async fn register_global_commands(ctx: &Context) {
     
     let commands = vec![
-        commands::ping::register(),
         commands::play::register(),
         commands::join::register(),
         commands::leave::register(),

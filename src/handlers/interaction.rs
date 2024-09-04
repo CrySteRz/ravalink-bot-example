@@ -11,12 +11,6 @@ pub async fn handle_interaction(ctx: Context, interaction: Interaction) {
             println!("Received command interaction: {command:#?}");
 
             let content = match command.data.name.as_str() {
-                "ping" => {
-                    if let Err(why) = commands::ping::run(&ctx, &command).await {
-                        println!("Error handling ping command: {why}");
-                    }
-                    None
-                },
                 "play" => {
                     if let Err(why) = commands::play::run(&ctx, &command).await {
                         println!("Error handling play command: {why}");

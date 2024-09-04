@@ -65,8 +65,12 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
                     .label("🔊Up")
                     .style(ButtonStyle::Secondary);
 
-                let ping_button = CreateButton::new("ping_button")
-                    .label("PING")
+                let loop_song_button = CreateButton::new("loop_song_button")
+                    .label("🔁Loop")
+                    .style(ButtonStyle::Secondary);
+
+                let playlist_button = CreateButton::new("playlist_button")
+                    .label("📜Playlist")
                     .style(ButtonStyle::Secondary);
                     
                 let stop_button = CreateButton::new("stop_button")
@@ -74,7 +78,7 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
                     .style(ButtonStyle::Secondary);
 
                 let action_row1 = CreateActionRow::Buttons(vec![pause_button, resume_button, back_button, skip_button]);
-                let action_row2 = CreateActionRow::Buttons(vec![down_button, up_button, ping_button, stop_button]);
+                let action_row2 = CreateActionRow::Buttons(vec![down_button, up_button, loop_song_button, playlist_button, stop_button]);
 
                 interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().embed(embed).components(vec![action_row1,action_row2]))).await?;
             }
