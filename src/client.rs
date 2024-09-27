@@ -6,8 +6,8 @@ use crate::handlers::Handler;
 use crate::caches::guild::GuildCacheKey;
 use std::{collections::HashMap, env, error::Error};
 use serenity::all::GatewayIntents;
-use charcoal_client::{CharcoalConfig, SASLConfig};
-use charcoal_client::serenity::SerenityInit;
+use ravalink_lib::{RavalinkConfig, SASLConfig};
+use ravalink_lib::serenity::SerenityInit;
 
 
 pub struct Client {
@@ -36,9 +36,9 @@ impl Client {
         let client = SerenityClient::builder(token, gateway_intents)
             .event_handler(handler)
             .application_id(app_id)
-            .register_charcoal(
+            .register_ravalink(
                 env::var("KAFKA_BROKER").expect("Fatality! KAFKA_BROKER not set!"),
-                CharcoalConfig {
+                RavalinkConfig {
                     ssl: None,
                     sasl: Some(SASLConfig {
                         kafka_username: env::var("KAFKA_USERNAME").expect("Fatality! KAFKA_USERNAME not set!"),

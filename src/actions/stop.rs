@@ -1,7 +1,7 @@
-use charcoal_client::actions::channel_manager::ChannelManager;
-use charcoal_client::get_handler_from_interaction_mutable;
-use charcoal_client::serenity::CharcoalKey;
-use charcoal_client::PlayerObject;
+use ravalink_lib::managers::channel_manager::ChannelManager;
+use ravalink_lib::get_handler_from_interaction_mutable;
+use ravalink_lib::serenity::RavalinkKey;
+use ravalink_lib::PlayerObject;
 use serenity::all::ComponentInteraction;
 use serenity::all::Context;
 use serenity::all::CommandInteraction;
@@ -17,7 +17,7 @@ pub async fn leave_command(ctx: &Context, interaction: &CommandInteraction) -> R
 
     match _handler {
         Some(handler) => {
-            handler.exit_channel().await.unwrap();
+            handler.stop().await.unwrap();
         }
         None => {
             interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;
@@ -35,7 +35,7 @@ pub async fn leave_button(ctx: &Context, interaction: &ComponentInteraction) -> 
 
     match _handler {
         Some(handler) => {
-            handler.exit_channel().await.unwrap();
+            handler.stop().await.unwrap();
         }
         None => {
             interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;

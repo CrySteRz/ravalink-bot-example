@@ -1,7 +1,7 @@
-use charcoal_client::actions::track_manager::TrackManager;
-use charcoal_client::get_handler_from_interaction_mutable;
-use charcoal_client::serenity::CharcoalKey;
-use charcoal_client::PlayerObject;
+use ravalink_lib::managers::track_manager::TrackManager;
+use ravalink_lib::get_handler_from_interaction_mutable;
+use ravalink_lib::serenity::RavalinkKey;
+use ravalink_lib::PlayerObject;
 use serenity::all::CreateCommand;
 use serenity::all::Context;
 use serenity::all::CommandInteraction;
@@ -17,7 +17,7 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
 
     match _handler {
         Some(handler) => {
-            handler.pause_playback().await.unwrap();
+            handler.pause().await.unwrap();
         }
         None => {
             interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;

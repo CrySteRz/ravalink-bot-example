@@ -6,13 +6,13 @@ use serenity::model::application::CommandOptionType;
 use::serenity::client::Context;
 use crate::utils::*;
 
-use charcoal_client::{
+use ravalink_lib::{
     get_handler_from_interaction_mutable, PlayerObject,
 };
-use charcoal_client::serenity::CharcoalKey;
+use ravalink_lib::serenity::RavalinkKey;
 use serenity::model::application::CommandInteraction;
 use serenity::model::application::CommandDataOptionValue;
-use charcoal_client::actions::player::Player;
+use ravalink_lib::managers::player_manager::Player;
 
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Error> {
     let url = interaction.data.options
@@ -35,7 +35,7 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
 
         match _handler {
             Some(_handler) => {
-                _handler.play_from_youtube(url.to_string()).await.unwrap();
+                _handler.play(url.to_string()).await.unwrap();
                 let user = interaction.user.clone();
                 let embed = CreateEmbed::default()
                     .description(format!("Playing: ({})", url)) 

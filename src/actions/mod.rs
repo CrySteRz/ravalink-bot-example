@@ -1,5 +1,5 @@
 pub mod pause;
-pub mod leave;
+pub mod stop;
 pub mod resume;
 pub mod skip;
 pub mod back;

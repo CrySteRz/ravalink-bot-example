@@ -5,26 +5,24 @@ use serenity::builder::{CreateCommand, CreateInteractionResponse, CreateInteract
 use serenity::model::guild::Guild;
 use serenity::all::ChannelId;
 use std::error::Error;
-use charcoal_client::PlayerObject;
-use charcoal_client::serenity::CharcoalKey;
-use charcoal_client::actions::channel_manager::ChannelManager;
-use hearth_interconnect::errors::ErrorReport;
-use hearth_interconnect::messages::Metadata;
+use ravalink_lib::PlayerObject;
+use ravalink_lib::serenity::RavalinkKey;
+use ravalink_lib::managers::channel_manager::ChannelManager;
 use crate::caches::guild::GuildCacheKey;
-use charcoal_client::actions::standard::CharcoalEventHandler;
+// use ravalink_lib::managers::standard::RavalinkEventHandler;
 
 //Todo move this
-struct CustomEventHandler {}
+// struct CustomEventHandler {}
 
-impl CharcoalEventHandler for CustomEventHandler {
-    fn handle_error(&self, error_report: ErrorReport) {
-        println!("Uh oh got error in event handler: {:?}", error_report);
-    }
+// impl RavalinkEventHandler for CustomEventHandler {
+//     fn handle_error(&self, error_report: ErrorReport) {
+//         println!("Uh oh got error in event handler: {:?}", error_report);
+//     }
 
-    fn handle_metadata_response(&self, metadata: Metadata) {
-        println!("Got metadata back in event handler: {:?}", metadata);
-    }
-}
+//     fn handle_metadata_response(&self, metadata: Metadata) {
+//         println!("Got metadata back in event handler: {:?}", metadata);
+//     }
+// }
 
 pub fn get_voice_channel_for_user(guild: &Guild, user_id: &UserId) -> Option<ChannelId> {
     guild
@@ -36,7 +34,6 @@ pub fn get_voice_channel_for_user(guild: &Guild, user_id: &UserId) -> Option<Cha
 
 
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
-    
     let guild_id = match interaction.guild_id {
         Some(guild) => guild,
         None => {
@@ -74,44 +71,32 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
             return Ok(());
         }
     };
+    
     let r = ctx.data.read().await;
-    let manager = r.get::<CharcoalKey>();
+    let manager = r.get::<RavalinkKey>();
     let mx = manager.unwrap().lock().await;
 
-    if mx.players.read().await.contains_key(&guild_id.to_string()) {
-        println!("Using pre-existing player");
-        let mut players = mx.players.write().await;
-        let handler = players.get_mut(&guild_id.to_string()).expect(
-            "This should never happen because we checked the key exists in the if check above",
-        );
-        handler
-            .join_channel(connect_to.to_string(), false)
-            .await
-            .unwrap();
-    } else {
-        println!("Creating new player");
-        let handler = PlayerObject::new(guild_id.to_string(), mx.tx.clone()).await;
-        println!("Created new handler");
-        match handler {
-            Ok(mut handler) => {
-                handler.register_event_handler(CustomEventHandler {}).await;
-                println!("Registered error callback");
-                handler
-                    .join_channel(connect_to.to_string(), true)
-                    .await
-                    .unwrap(); // We use true here to tell Charcoal to create the Job
-                println!("Joined channel");
-                // Insert the newly created PlayerObject into the HashMap so we can use it later
-                mx.players
-                    .write()
-                    .await
-                    .insert(guild_id.to_string(), handler);
-                println!("Inserted new player");
-            }
-            Err(e) => {
-                // If creating the job failed send an error message
-                interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create player: {:?}", e)))).await?;
-            }
+    // Always create a new player, no check for pre-existing player CHECK HERE
+    println!("Creating new player");
+    let handler = PlayerObject::new(guild_id.into(), mx.tx.clone()).await;
+    println!("Created new handler");
+
+    match handler {
+        Ok(mut handler) => {
+            handler
+                .connect(connect_to.into())
+                .await
+                .unwrap();
+            println!("Joined channel");
+        
+            mx.players
+                .write()
+                .await
+                .insert(guild_id.to_string(), handler);
+            println!("Inserted new player");
+        }
+        Err(e) => {
+            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create player: {:?}", e)))).await?;
         }
     }
 

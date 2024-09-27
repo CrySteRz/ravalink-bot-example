@@ -2,7 +2,7 @@ use std::error::Error;
 use serenity::all::{ComponentInteraction, Context, CreateActionRow, CreateEmbed, CreateInteractionResponseMessage, CreateSelectMenu, CreateSelectMenuKind, CreateSelectMenuOption};
 use serenity::builder::CreateInteractionResponse;
 use crate::actions::pause::pause_button;
-use crate::actions::leave::leave_button;
+use crate::actions::stop::leave_button;
 use crate::actions::resume::resume_button;
 // use crate::actions::back::back_button;
 // use crate::actions::skip::skip_button;
@@ -136,8 +136,8 @@ pub async fn handle_button_interaction(ctx: &Context, interaction: &ComponentInt
             let embed = CreateEmbed::default()
                 .title("Playlist Panel")
                 //.description("📜 | Playlist Panel")
-                .color(serenity::model::Colour(119))  // Set a blue color
-                .image("https://cdn.discordapp.com/attachments/925414156029538375/1107916980314447982/Banner_2_5.png?ex=66d94f18&is=66d7fd98&hm=8f26073df1af6f222eaab31fd5a58f8564aa592e06f853b9c0bed321739ec18a&")  // URL of your larger image
+                .color(serenity::model::Colour(119))
+                .image("https://cdn.discordapp.com/attachments/925414156029538375/1107916980314447982/Banner_2_5.png?ex=66d94f18&is=66d7fd98&hm=8f26073df1af6f222eaab31fd5a58f8564aa592e06f853b9c0bed321739ec18a&")
                 .author(user.into());
 
             let options = vec![
@@ -152,15 +152,15 @@ pub async fn handle_button_interaction(ctx: &Context, interaction: &ComponentInt
 
             let playlist_select_menu = CreateSelectMenu::new("playlist_select_menu", kind)
                 .placeholder("📜 | Playlist Panel")  
-                .min_values(1)  // Allow selecting at least 1 option
-                .max_values(1);  // Allow selecting only 1 option
+                .min_values(1) 
+                .max_values(1);
 
             let action_row = CreateActionRow::SelectMenu(playlist_select_menu);
 
             let response = CreateInteractionResponse::Message(
                 CreateInteractionResponseMessage::new()
                     .embed(embed).ephemeral(true)
-                    .components(vec![action_row])  // Add the action row containing the select menu
+                    .components(vec![action_row])
             );
 
             if let Err(_e) = interaction.create_response(&ctx.http, response).await {

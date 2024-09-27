@@ -6,9 +6,8 @@ use crate::handlers::button;
 
 pub async fn handle_interaction(ctx: Context, interaction: Interaction) {
     match interaction {
-        // Handle slash commands
         Interaction::Command(command) => {
-            println!("Received command interaction: {command:#?}");
+            // println!("Received command interaction: {command:#?}");
 
             let content = match command.data.name.as_str() {
                 "play" => {
@@ -23,9 +22,9 @@ pub async fn handle_interaction(ctx: Context, interaction: Interaction) {
                     }
                     None
                 },
-                "leave" => {
-                    if let Err(why) = commands::leave::run(&ctx, &command).await {
-                        println!("Error handling leave command: {why}");
+                "stop" => {
+                    if let Err(why) = commands::stop::run(&ctx, &command).await {
+                        println!("Error handling stop command: {why}");
                     }
                     None
                 },

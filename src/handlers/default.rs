@@ -7,7 +7,7 @@ pub async fn register_global_commands(ctx: &Context) {
     let commands = vec![
         commands::play::register(),
         commands::join::register(),
-        commands::leave::register(),
+        commands::stop::register(),
         commands::pause::register(),
         commands::resume::register(),
         commands::skip::register(),
