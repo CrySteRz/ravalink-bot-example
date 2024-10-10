@@ -4,18 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.40", features = ["full"] }
 serenity = "0.12.2"
 dotenvy = "0.15.0"
 url = "2.5.2"
 rdkafka = { version = "0.31", features = ["cmake-build","ssl"] }
-
 nanoid = "0.4.0"
 openssl = "0.10.52"
 futures = "0.3.28"
-hearth-interconnect = "0.1.0"
 
+[dependencies.ravalink-lib]
+path = "/home/crysterz/Projects/ravalink-lib/"
 
-[dependencies.charcoal-client]
-git = "https://github.com/CrySteRz/ravalink-client-lib.git"
-
+[dependencies.ravalink-interconnect]
+path = "/home/crysterz/Projects/ravalink-interconnect/"

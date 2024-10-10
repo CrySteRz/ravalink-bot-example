@@ -1,3 +1,4 @@
+use ravalink_lib::managers::default_manager::DefaultObject;
 use serenity::prelude::*;
 use serenity::Client as SerenityClient;
 use serenity::model::id::ApplicationId;
@@ -8,7 +9,7 @@ use std::{collections::HashMap, env, error::Error};
 use serenity::all::GatewayIntents;
 use ravalink_lib::{RavalinkConfig, SASLConfig};
 use ravalink_lib::serenity::SerenityInit;
-
+use ravalink_lib::managers::default_manager::DefaultManager;
 
 pub struct Client {
     pub rusty_client: SerenityClient,
@@ -48,16 +49,23 @@ impl Client {
                 },
             )
             .await?;
-
         {
             let mut data = client.data.write().await;
             data.insert::<GuildCacheKey>(guild_cache);
         }
-
         Ok(Client { rusty_client: client })
     }
 
     pub async fn start(&mut self) -> Result<(), serenity::Error> {
-        self.rusty_client.start().await
+        let rusty = DefaultObject;
+        match rusty.ping().await {
+            Ok(_pong_message) => {
+                self.rusty_client.start().await
+            }
+            Err(e) => {
+                eprintln!("Ping failed: {:?}", e);
+                return Err(serenity::Error::Other("Ping to Ravalink failed, bot will not start."));
+            }
+        }        
     }
 }
