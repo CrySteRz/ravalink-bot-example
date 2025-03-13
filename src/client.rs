@@ -1,4 +1,3 @@
-use ravalink_lib::managers::default_manager::DefaultObject;
 use serenity::prelude::*;
 use serenity::Client as SerenityClient;
 use serenity::model::id::ApplicationId;
@@ -7,9 +6,8 @@ use crate::handlers::Handler;
 use crate::caches::guild::GuildCacheKey;
 use std::{collections::HashMap, env, error::Error};
 use serenity::all::GatewayIntents;
-use ravalink_lib::{RavalinkConfig, SASLConfig};
+use ravalink_lib::{RavalinkConfig, SASLConfig, SSLConfig};
 use ravalink_lib::serenity::SerenityInit;
-use ravalink_lib::managers::default_manager::DefaultManager;
 
 pub struct Client {
     pub rusty_client: SerenityClient,
@@ -38,14 +36,19 @@ impl Client {
             .event_handler(handler)
             .application_id(app_id)
             .register_ravalink(
-                env::var("KAFKA_BROKER").expect("Fatality! KAFKA_BROKER not set!"),
+                env::var("KAFKA_URI").expect("Fatality! KAFKA_URI not set!"),
                 RavalinkConfig {
-                    ssl: None,
-                    sasl: Some(SASLConfig {
-                        kafka_username: env::var("KAFKA_USERNAME").expect("Fatality! KAFKA_USERNAME not set!"),
-                        kafka_password: env::var("KAFKA_PASSWORD").expect("Fatality! KAFKA_PASSWORD not set!"),
-                    }),
-                    kafka_topic: env::var("KAFKA_TOPIC").expect("Fatality! KAFKA_TOPIC not set!"),
+                    ssl: SSLConfig {
+                        kafka_ssl_ca_location: env::var("KAFKA_SSL_CA_LOCATION").expect("Fatality! KAFKA_SSL_CA_LOCATION not set!"),
+                        kafka_ssl_keystore_location: env::var("KAFKA_SSL_KEYSTORE_LOCATION").expect("Fatality! KAFKA_SSL_KEYSTORE_LOCATION not set!"),
+                        kafka_ssl_keystore_password: env::var("KAFKA_SSL_KEYSTORE_PASSWORD").expect("Fatality! KAFKA_SSL_KEYSTORE_PASSWORD not set!"),
+                    },
+                    sasl: SASLConfig {
+                        kafka_sasl_mechanism: env::var("KAFKA_SASL_MECHANISM").expect("Fatality! KAFKA_SASL_MECHANISM not set!"),
+                        kafka_sasl_username: env::var("KAFKA_SASL_USERNAME").expect("Fatality! KAFKA_SASL_USERNAME not set!"),
+                        kafka_sasl_password: env::var("KAFKA_SASL_PASSWORD").expect("Fatality! KAFKA_SASL_PASSWORD not set!"),
+                    },
+                    kafka_topic: env::var("KAFKA_TOPIC").expect("Fatality! KAFKA_TOPIC not set!"), 
                 },
             )
             .await?;
@@ -57,15 +60,7 @@ impl Client {
     }
 
     pub async fn start(&mut self) -> Result<(), serenity::Error> {
-        let rusty = DefaultObject;
-        match rusty.ping().await {
-            Ok(_pong_message) => {
                 self.rusty_client.start().await
-            }
-            Err(e) => {
-                eprintln!("Ping failed: {:?}", e);
-                return Err(serenity::Error::Other("Ping to Ravalink failed, bot will not start."));
-            }
         }        
     }
-}
+

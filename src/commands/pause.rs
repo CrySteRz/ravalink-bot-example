@@ -10,18 +10,26 @@ use serenity::all::CreateInteractionResponseMessage;
 use std::error::Error;
 
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
-
-
-    let mut _handler: Option<&mut PlayerObject> = None;
+    let mut _handler: Option<PlayerObject> = None;
     get_handler_from_interaction_mutable!(ctx, interaction, _handler);
 
     match _handler {
         Some(handler) => {
             handler.pause().await.unwrap();
+            interaction.create_response(
+                &ctx.http,
+                CreateInteractionResponse::Message(
+                    CreateInteractionResponseMessage::new().content("Track paused.")
+                )
+            ).await?;
         }
         None => {
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get manager"))).await?;
-            return Ok(());
+            interaction.create_response(
+                &ctx.http, 
+                CreateInteractionResponse::Message(
+                    CreateInteractionResponseMessage::new().content("No active player found. Use /play to start a track.")
+                )
+            ).await?;
         }
     }
 

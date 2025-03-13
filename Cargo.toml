@@ -1,11 +1,11 @@
 [package]
-name = "rusty-discord-bot"
+name = "viby-client"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 tokio = { version = "1.40", features = ["full"] }
-serenity = "0.12.2"
+serenity = "0.12.4"
 dotenvy = "0.15.0"
 url = "2.5.2"
 rdkafka = { version = "0.31", features = ["cmake-build","ssl"] }
@@ -14,7 +14,7 @@ openssl = "0.10.52"
 futures = "0.3.28"
 
 [dependencies.ravalink-lib]
-path = "/home/crysterz/Projects/ravalink-lib/"
+path = "/home/user/Projects/ravalink-lib/"
 
 [dependencies.ravalink-interconnect]
-path = "/home/crysterz/Projects/ravalink-interconnect/"
+path = "/home/user/Projects/ravalink-interconnect/"

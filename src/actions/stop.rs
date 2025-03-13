@@ -12,7 +12,7 @@ use std::error::Error;
 pub async fn leave_command(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
 
 
-    let mut _handler: Option<&mut PlayerObject> = None;
+    let mut _handler: Option<PlayerObject> = None;
     get_handler_from_interaction_mutable!(ctx, interaction, _handler);
 
     match _handler {
@@ -30,7 +30,7 @@ Ok(())
 
 pub async fn leave_button(ctx: &Context, interaction: &ComponentInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
 
-    let mut _handler: Option<&mut PlayerObject> = None;
+    let mut _handler: Option<PlayerObject> = None;
     get_handler_from_interaction_mutable!(ctx, interaction, _handler);
 
     match _handler {

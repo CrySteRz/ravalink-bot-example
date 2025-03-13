@@ -1,4 +1,4 @@
-use rusty_discord_bot::client::Client;
+use viby_client::client::Client;
 use std::error::Error;
 
 #[tokio::main]

@@ -9,28 +9,13 @@ use ravalink_lib::PlayerObject;
 use ravalink_lib::serenity::RavalinkKey;
 use ravalink_lib::managers::channel_manager::ChannelManager;
 use crate::caches::guild::GuildCacheKey;
-// use ravalink_lib::managers::standard::RavalinkEventHandler;
+use crate::commands::send_interaction_response;
 
-//Todo move this
-// struct CustomEventHandler {}
 
-// impl RavalinkEventHandler for CustomEventHandler {
-//     fn handle_error(&self, error_report: ErrorReport) {
-//         println!("Uh oh got error in event handler: {:?}", error_report);
-//     }
-
-//     fn handle_metadata_response(&self, metadata: Metadata) {
-//         println!("Got metadata back in event handler: {:?}", metadata);
-//     }
-// }
 
 pub fn get_voice_channel_for_user(guild: &Guild, user_id: &UserId) -> Option<ChannelId> {
-    guild
-        .voice_states
-        .get(user_id)
-        .and_then(|voice_state| voice_state.channel_id)
+    guild.voice_states.get(user_id).and_then(|voice_state| voice_state.channel_id)
 }
-//Till here
 
 
 pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -49,15 +34,15 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
     let guild = match cache.get(&guild_id) {
         Some(guild) => guild.clone(),
         None => {
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Guild not found in cache"))).await?;
+            send_interaction_response(ctx, interaction, "Guild not found in cache").await?;
             return Ok(());
         }
     };
-    
+
     let member_id = match &interaction.member {
         Some(member) => member.user.id,
         None => {
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get member"))).await?;
+            send_interaction_response(ctx, interaction, "Failed to get member").await?;
             return Ok(());
         }
     };
@@ -67,13 +52,12 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
     let connect_to = match channel_id {
         Some(channel) => channel,
         None => {
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content("Failed to get channel"))).await?;
+            send_interaction_response(ctx, interaction, "You are not in a voice channel").await?;
             return Ok(());
         }
     };
-    
-    let r = ctx.data.read().await;
-    let manager = r.get::<RavalinkKey>();
+
+    let manager = data.get::<RavalinkKey>();
     let mx = manager.unwrap().lock().await;
 
     // Always create a new player, no check for pre-existing player CHECK HERE
@@ -88,7 +72,7 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
                 .await
                 .unwrap();
             println!("Joined channel");
-        
+
             mx.players
                 .write()
                 .await
@@ -96,7 +80,7 @@ pub async fn run(ctx: &Context, interaction: &CommandInteraction) -> Result<(), 
             println!("Inserted new player");
         }
         Err(e) => {
-            interaction.create_response(&ctx.http, CreateInteractionResponse::Message(CreateInteractionResponseMessage::new().content(format!("Failed to create player: {:?}", e)))).await?;
+            send_interaction_response(ctx, interaction, format!("Failed to create player: {:?}", e)).await?;
         }
     }
 
